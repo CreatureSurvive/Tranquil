@@ -1,0 +1,43 @@
+/*
+  Preferences.strings
+  Tranquil
+
+  Created by Dana Buehre on 3/19/22.
+
+*/
+
+/****************************************************************************/
+/* Localization file */
+
+/* settings navigation title */
+"SETTINGS_TITLE" = "Tranquil";
+
+/* settings cells */
+/****************************************************************************/
+"BACKGROUND_SOUNDS_GROUP_FOOTER" = "Plays background sounds to mask unwanted environmental noise. These sounds can minimize distractions and help you to focus, calm, or rest.";
+"BACKGROUND_SOUNDS_SWITCH_TITLE" = "Background Sounds";
+
+"ACTIVE_SOUND_LIST_TITLE" = "Sound";
+"ACTIVE_SOUND_LIST_FOOTER_MESSAGE" = "\nSwipe left on downloaded, or imported sounds for more options.\n\nDefault bundled or downloaded sounds cannot be renamed, as they use localized names. User imported sounds can be renamed or deleted.";
+
+"VOLUME_SLIDER_TITLE" = "Volume";
+
+"USE_WITH_MEDIA_SWITCH_TITLE" = "Use When Media Is Playing";
+
+"VOLUME_WITH_MEDIA_SLIDER_TITLE" = "Volume With Media";
+
+"PLAY_SAMPLE_BUTTON_LABEL" = "Play Sample";
+
+"PAUSE_ON_ROUTE_CHANGE_FOOTER" = "Pause playback when the audio route is changed. For instance when you disconnect your airpods, playback will be paused.";
+"PAUSE_ON_ROUTE_CHANGE_SWITCH_TITLE" = "Pause On Route Change";
+
+"IMPORT_CUSTOM_SOUND_BUTTON_TITLE" = "Import Custom Sound";
+
+"OPEN_IMPORT_DIRECTORY_TITLE" = "Open Import Directory In Filza";
+
+"TRANSLATION_BUTTON_TITLE" = "Help Translate Tranquil";
+
+"SOURCE_CODE_BUTTON_TITLE" = "View Project Source Code";
+
+"DEPICTION_BUTTON_TITLE" = "View Tranquil Depiction";
+/****************************************************************************/

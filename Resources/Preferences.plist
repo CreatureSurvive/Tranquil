@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+   Preferences.plist
+   Tranquil
+
+   Created by Dana Buehre on 3/9/22.
+-->
+<plist version="1.0">
+	<dict>
+		<key>title</key>
+		<string>SETTINGS_TITLE</string>
+		<key>items</key>
+		<array>
+
+			<dict>
+				<key>cell</key>
+				<string>PSGroupCell</string>
+				<key>footerText</key>
+				<string>BACKGROUND_SOUNDS_GROUP_FOOTER</string>
+			</dict>
+
+			<dict>
+				<key>cell</key>
+				<string>PSSwitchCell</string>
+				<key>label</key>
+				<string>BACKGROUND_SOUNDS_SWITCH_TITLE</string>
+				<key>key</key>
+				<string>kBackgroundSoundsActive</string>
+				<key>PostNotification</key>
+				<string>com.creaturecoding.tranquil/preferences-changed</string>
+				<key>defaults</key>
+				<string>com.creaturecoding.tranquil</string>
+				<key>default</key>
+				<true/>
+			</dict>
+
+			<dict>
+				<key>cell</key>
+				<string>PSGroupCell</string>
+			</dict>
+
+			<dict>
+				<key>id</key>
+				<string>activeSoundSpecifier</string>
+				<key>cell</key>
+				<string>PSLinkListCell</string>
+				<key>detail</key>
+				<string>TranquilListItemsController</string>
+				<key>key</key>
+				<string>kActiveSound</string>
+				<key>titlesDataSource</key>
+				<string>activeSoundTitles</string>
+				<key>valuesDataSource</key>
+				<string>activeSoundValues</string>
+				<key>label</key>
+				<string>ACTIVE_SOUND_LIST_TITLE</string>
+				<key>staticTextMessage</key>
+				<string>ACTIVE_SOUND_LIST_FOOTER_MESSAGE</string>
+				<key>PostNotification</key>
+				<string>com.creaturecoding.tranquil/preferences-changed</string>
+				<key>defaults</key>
+				<string>com.creaturecoding.tranquil</string>
+				<key>default</key>
+				<string>BROWN_NOISE.m4a</string>
+			</dict>
+
+			<dict>
+				<key>cell</key>
+				<string>PSGroupCell</string>
+			</dict>
+
+			<dict>
+				<key>id</key>
+				<string>volumeDisplaySpecifier</string>
+				<key>cell</key>
+				<string>PSTitleValueCell</string>
+				<key>label</key>
+				<string>VOLUME_SLIDER_TITLE</string>
+				<key>get</key>
+				<string>getActiveVolume</string>
+			</dict>
+
+			<dict>
+				<key>id</key>
+				<string>volumeSpecifier</string>
+				<key>cell</key>
+				<string>PSSliderCell</string>
+				<key>min</key>
+				<real>0</real>
+				<key>max</key>
+				<real>1</real>
+				<key>key</key>
+				<string>kPlaybackVolume</string>
+				<key>leftImage</key>
+				<string>VolumeMinGrey.png</string>
+				<key>rightImage</key>
+				<string>VolumeMaxGrey.png</string>
+				<key>PostNotification</key>
+				<string>com.creaturecoding.tranquil/preferences-changed</string>
+				<key>defaults</key>
+				<string>com.creaturecoding.tranquil</string>
+				<key>default</key>
+				<real>0.6</real>
+			</dict>
+
+			<dict>
+				<key>cell</key>
+				<string>PSGroupCell</string>
+			</dict>
+
+			<dict>
+				<key>cell</key>
+				<string>PSSwitchCell</string>
+				<key>label</key>
+				<string>USE_WITH_MEDIA_SWITCH_TITLE</string>
+				<key>key</key>
+				<string>kUseWhenMediaIsPlaying</string>
+				<key>PostNotification</key>
+				<string>com.creaturecoding.tranquil/preferences-changed</string>
+				<key>defaults</key>
+				<string>com.creaturecoding.tranquil</string>
+				<key>default</key>
+				<true/>
+			</dict>
+
+			<dict>
+				<key>id</key>
+				<string>volumeWithMediaDisplaySpecifier</string>
+				<key>cell</key>
+				<string>PSTitleValueCell</string>
+				<key>label</key>
+				<string>VOLUME_WITH_MEDIA_SLIDER_TITLE</string>
+				<key>get</key>
+				<string>getActiveVolumeWithMedia</string>
+			</dict>
+
+			<dict>
+				<key>id</key>
+				<string>volumeWithMediaSpecifier</string>
+				<key>cell</key>
+				<string>PSSliderCell</string>
+				<key>min</key>
+				<real>0</real>
+				<key>max</key>
+				<real>1</real>
+				<key>key</key>
+				<string>kPlaybackVolumeWithMedia</string>
+				<key>leftImage</key>
+				<string>VolumeMinGrey.png</string>
+				<key>rightImage</key>
+				<string>VolumeMaxGrey.png</string>
+				<key>PostNotification</key>
+				<string>com.creaturecoding.tranquil/preferences-changed</string>
+				<key>defaults</key>
+				<string>com.creaturecoding.tranquil</string>
+				<key>default</key>
+				<real>0.6</real>
+			</dict>
+
+			<dict>
+				<key>id</key>
+				<string>playSampleSpecifier</string>
+				<key>cell</key>
+				<string>PSButtonCell</string>
+				<key>label</key>
+				<string>PLAY_SAMPLE_BUTTON_LABEL</string>
+				<key>action</key>
+				<string>playSampleWithMedia</string>
+			</dict>
+
+			<dict>
+				<key>cell</key>
+				<string>PSGroupCell</string>
+				<key>footerText</key>
+				<string>PAUSE_ON_ROUTE_CHANGE_FOOTER</string>
+			</dict>
+
+			<dict>
+				<key>cell</key>
+				<string>PSSwitchCell</string>
+				<key>label</key>
+				<string>PAUSE_ON_ROUTE_CHANGE_SWITCH_TITLE</string>
+				<key>key</key>
+				<string>kPauseOnRouteChange</string>
+				<key>PostNotification</key>
+				<string>com.creaturecoding.tranquil/preferences-changed</string>
+				<key>defaults</key>
+				<string>com.creaturecoding.tranquil</string>
+				<key>default</key>
+				<true/>
+			</dict>
+
+			<dict>
+				<key>cell</key>
+				<string>PSGroupCell</string>
+			</dict>
+
+			<dict>
+				<key>cell</key>
+				<string>PSButtonCell</string>
+				<key>label</key>
+				<string>IMPORT_CUSTOM_SOUND_BUTTON_TITLE</string>
+				<key>action</key>
+				<string>presentDocumentPicker</string>
+			</dict>
+
+			<dict>
+				<key>cell</key>
+				<string>PSButtonCell</string>
+				<key>label</key>
+				<string>OPEN_IMPORT_DIRECTORY_TITLE</string>
+				<key>action</key>
+				<string>openImportDirectory</string>
+			</dict>
+
+			<dict>
+				<key>cell</key>
+				<string>PSGroupCell</string>
+			</dict>
+
+			<dict>
+				<key>cell</key>
+				<string>PSButtonCell</string>
+				<key>label</key>
+				<string>TRANSLATION_BUTTON_TITLE</string>
+				<key>action</key>
+				<string>openTranslations</string>
+			</dict>
+
+			<dict>
+				<key>cell</key>
+				<string>PSButtonCell</string>
+				<key>label</key>
+				<string>SOURCE_CODE_BUTTON_TITLE</string>
+				<key>action</key>
+				<string>openSourceCode</string>
+			</dict>
+
+			<dict>
+				<key>cell</key>
+				<string>PSButtonCell</string>
+				<key>label</key>
+				<string>DEPICTION_BUTTON_TITLE</string>
+				<key>action</key>
+				<string>openDepiction</string>
+			</dict>
+
+			<dict>
+				<key>cell</key>
+				<string>PSGroupCell</string>
+				<key>footerText</key>
+				<string>Made with &#x2665; by CreatureCoding • 2022</string>
+				<key>footerAlignment</key>
+				<integer>1</integer>
+			</dict>
+
+		</array>
+	</dict>
+</plist>

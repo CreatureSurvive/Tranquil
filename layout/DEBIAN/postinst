@@ -1,0 +1,7 @@
+#!/bin/sh
+
+mkdir -p /var/mobile/Library/Application\ Support/Tranquil/Audio
+chmod -R 0755 /var/mobile/Library/Application\ Support/Tranquil
+chown -R mobile:mobile /var/mobile/Library/Application\ Support/Tranquil
+
+exit 0;

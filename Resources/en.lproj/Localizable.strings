@@ -1,0 +1,73 @@
+/*
+  Localizable.strings
+  Tranquil
+
+  Created by Dana Buehre on 3/19/22.
+
+*/
+
+/****************************************************************************/
+/* Localization file */
+
+/* project name */
+"PROJECT_NAME" = "Tranquil";
+
+/* open preferences module footer button */
+"PROJECT_SETTINGS_TITLE" = "Tranquil Settings";
+
+/* module list button text, shows when downloads are available */
+"DOWNLOADS_AVAILABLE_TITLE" = "Sounds Available For Download";
+
+/* preferences sample playback buttons */
+"STOP_SAMPLE_BUTTON_LABEL" = "Stop Sample";
+"PLAY_SAMPLE_BUTTON_LABEL" = "Play Sample";
+
+/* sound import rename alert */
+"RENAME_FILE_TITLE" = "Rename File";
+"RENAME_FILE_MESSAGE" = "You can change the name to your liking, or leave it as is. The name you choose here will be the display name of the sound.";
+"RENAME_FILE_ERROR_MESSAGE" = "The file \"%@\" cannot be renamed to \"%@\" because the chosen name is invalid";
+
+/* sound import success alert */
+"IMPORTED_FILE_TITLE" = "Imported File";
+"IMPORTED_FILE_MESSAGE" = "The file \"%@\" was imported successfully";
+
+/* sound import failure alert */
+"IMPORTING_FILE_ERROR_TITLE" = "Error Importing File";
+"IMPORTING_FILE_ACCESSIBILITY_ERROR_MESSAGE" = "There was a problem importing this file, either the file doesnt exist, or it is otherwise inaccessible";
+
+/* generic error title */
+"GENERIC_ERROR_TITLE" = "An Error Occurred";
+
+/* alert action buttons */
+"OKAY_LABEL" = "Okay";
+"CANCEL_LABEL" = "Cancel";
+
+/* active sound menu swipe action titles */
+"SWIPE_ACTION_DELETE_TITLE" = "Delete";
+"SWIPE_ACTION_RENAME_TITLE" = "Rename";
+
+/* timer status label */
+"TIMER_STATUS_LABEL" = "Timer %@";
+
+/* volume status label */
+"VOLUME_STATUS_LABEL" = "Volume %d%%";
+
+/* timer states */
+"STATUS_ON" = "On";
+"STATUS_OFF" = "Off";
+
+/* packaged sound titles */
+"BALANCED_NOISE" = "Balanced Noise";
+"BROWN_NOISE" = "Brown Noise";
+"CENTRAL_NOISE" = "Central Noise";
+"GREY_NOISE" = "Grey Noise";
+"PINK_NOISE" = "Pink Noise";
+"WHITE_NOISE" = "White Noise";
+
+/* downloadable sounds */
+"INFRA_NOISE" = "Infra Noise";
+"ULTRA_NOISE" = "Ultra Noise";
+"FLOWING_STREAM" = "Flowing Stream";
+"LIGHT_RAIN" = "Light Rain";
+"OCEAN_WAVES" = "Ocean Waves";
+"THUNDER_STORM" = "Thunder Storm";

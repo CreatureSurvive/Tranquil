@@ -1,0 +1,13 @@
+/*
+  InfoPlist.strings
+  Tranquil
+
+  Created by Dana Buehre on 3/19/22.
+
+*/
+
+/****************************************************************************/
+/* Localization file */
+
+/* tweak name, displayed in control center settings */
+"CFBundleDisplayName" = "Tranquil";
