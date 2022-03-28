@@ -1,0 +1,12 @@
+build
+Tranquil.xcodeproj/xcuserdata
+Tranquil.xcodeproj/xcshareddata
+Tranquil.xcodeproj/project.xcworkspace/xcuserdata
+Tranquil.xcodeproj/project.xcworkspace/xcshareddata
+.idea
+.staging
+.theos
+.vscode
+.idea
+.DS_Store
+.DS_Store?
