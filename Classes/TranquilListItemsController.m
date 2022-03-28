@@ -67,7 +67,7 @@
     if ([self audioFileNeedsDownload:indexPath]) {
 
         // prevent playing default sound when selecting a sound that is not yet downloaded
-        [[(TranquilPreferencesController *) self.parentController preferences] setBool:YES forKey:@"kPauseForDownload"];
+        [self _setPlaybackPausedForDownload:YES withPlaybackValue:nil notifyModule:NO];
         [super listItemSelected:indexPath];
         [self downloadAudioFileForSpecifierAtIndexPath:indexPath];
 
@@ -109,6 +109,8 @@
                     [self _selectDefaultValue];
                     [(PSListController *) self.parentController reloadSpecifier:self.specifier];
                     [self setDownloadIconForCell:[self.table cellForRowAtIndexPath:indexPath]];
+
+                    [self _setPlaybackPausedForDownload:NO withPlaybackValue:nil notifyModule:YES];
                 });
 
                 return;
@@ -118,9 +120,7 @@
             NSDictionary *filePermissions = @{ NSFileOwnerAccountID: @(501), NSFileGroupOwnerAccountID: @(501), NSFilePosixPermissions: @(0755) };
             [NSFileManager.defaultManager setAttributes:filePermissions ofItemAtPath:destinationPath error:nil];
 
-            [[(TranquilPreferencesController *) self.parentController preferences] setBool:NO forKey:@"kPauseForDownload"];
-            [self.parentController setPreferenceValue:specifier.values.firstObject specifier:self.specifier];
-            CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.creaturecoding.tranquil/preferences-changed"), NULL, NULL, TRUE);
+            [self _setPlaybackPausedForDownload:NO withPlaybackValue:specifier.values.firstObject notifyModule:YES];
 
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self setSpinnerForCellAtIndexPath:indexPath enabled:NO];
@@ -271,6 +271,21 @@
     [self.parentController setPreferenceValue:defaultValue specifier:self.specifier];
     NSInteger index = [self.specifier.values indexOfObject:defaultValue];
     [self listItemSelected:[NSIndexPath indexPathForRow:index inSection:0]];
+}
+
+- (void)_setPlaybackPausedForDownload:(BOOL)pause withPlaybackValue:(NSString *)playbackValue notifyModule:(BOOL)notify
+{
+    [[(TranquilPreferencesController *) self.parentController preferences] setBool:pause forKey:@"kPauseForDownload"];
+
+    if (playbackValue) {
+
+        [self.parentController setPreferenceValue:playbackValue specifier:self.specifier];
+    }
+
+    if (notify) {
+
+        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.creaturecoding.tranquil/preferences-changed"), NULL, NULL, TRUE);
+    }
 }
 
 @end
