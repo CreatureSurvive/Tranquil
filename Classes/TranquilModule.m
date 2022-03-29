@@ -74,7 +74,7 @@
 
 - (NSArray <NSDictionary *> *)audioMetadata
 {
-    return AudioMetadata([self moduleBundle].bundlePath);
+    return AudioMetadata();
 }
 
 - (void)refreshState

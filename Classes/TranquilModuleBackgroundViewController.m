@@ -54,6 +54,8 @@ typedef NS_ENUM(NSUInteger, TMLayoutDirection) {
 
     UITapGestureRecognizer *_controlDismissRecognizer;
 
+    NSLayoutConstraint *_timerButtonWidthAnchor;
+    NSLayoutConstraint *_volumeButtonWidthAnchor;
     NSLayoutConstraint *_timerControlTrailingAnchor;
     NSLayoutConstraint *_volumeControlLeadingAnchor;
     NSLayoutConstraint *_timerControlContainerLeadingAnchor;
@@ -375,11 +377,13 @@ typedef NS_ENUM(NSUInteger, TMLayoutDirection) {
                 CGFloat controlWidth = (UIEdgeInsetsInsetRect(self.view.bounds, self.view.layoutMargins).size.width - 76);
                 (isVolume ? _volumeControlContainerTrailingAnchor : _timerControlContainerLeadingAnchor).constant = opening ? 0 : NEGATE_IF(controlWidth, isVolume);
                 (isVolume ? _volumeControlLeadingAnchor : _timerControlTrailingAnchor).constant = opening ? NEGATE_IF(65, !isVolume) : NEGATE_IF(3, !isVolume);
+                (isVolume ? _volumeButtonWidthAnchor : _timerButtonWidthAnchor).constant = opening ? 54 : 108;
             }   break;
             case TMLayoutDirectionHorizontal: {
                 CGFloat controlHeight = (UIEdgeInsetsInsetRect(self.view.bounds, self.view.layoutMargins).size.height - 76);
                 (isVolume ? _volumeControlContainerBottomAnchor : _timerControlContainerTopAnchor).constant = opening ? 0 : NEGATE_IF(controlHeight, isVolume);
                 (isVolume ? _volumeControlTopAnchor : _timerControlBottomAnchor).constant = opening ? NEGATE_IF(65, !isVolume) : NEGATE_IF(3, !isVolume);
+                (isVolume ? _volumeButtonWidthAnchor : _timerButtonWidthAnchor).constant = 108;
             }   break;
         }
 
@@ -458,11 +462,15 @@ typedef NS_ENUM(NSUInteger, TMLayoutDirection) {
 
 - (void)_configureConstraints
 {
+    CGFloat buttonViewWidth = 108;
     CGFloat bottomMargin = -88;
     CGFloat fixedHeight = 54;
     CGFloat openHeight = 46;
     CGFloat margin = 38;
     UILayoutGuide *marginsGuide = self.view.layoutMarginsGuide;
+
+    _timerButtonWidthAnchor = [_timerButtonViewController.view.widthAnchor constraintEqualToConstant:buttonViewWidth];
+    _volumeButtonWidthAnchor = [_volumeButtonViewController.view.widthAnchor constraintEqualToConstant:buttonViewWidth];
 
     _timerControlTrailingAnchor = [_timerStepper.trailingAnchor constraintEqualToAnchor:_timerControlContainer.trailingAnchor constant:-65];
     _volumeControlLeadingAnchor = [_volumeSlider.leadingAnchor constraintEqualToAnchor:_volumeControlContainer.leadingAnchor constant:65];
@@ -472,6 +480,8 @@ typedef NS_ENUM(NSUInteger, TMLayoutDirection) {
     _verticalConstraints = @[
             _timerControlTrailingAnchor,
             _volumeControlLeadingAnchor,
+            _timerButtonWidthAnchor,
+            _volumeButtonWidthAnchor,
             _timerControlContainerLeadingAnchor,
             _volumeControlContainerTrailingAnchor,
             [_controlContainer.heightAnchor constraintEqualToConstant:fixedHeight],
@@ -491,16 +501,14 @@ typedef NS_ENUM(NSUInteger, TMLayoutDirection) {
             [_timerStepper.topAnchor constraintEqualToAnchor:_timerControlContainer.topAnchor constant:4],
             [_timerStepper.bottomAnchor constraintEqualToAnchor:_timerControlContainer.bottomAnchor constant:-4],
             [_volumeButtonViewController.view.heightAnchor constraintEqualToConstant:fixedHeight],
-            [_volumeButtonViewController.view.widthAnchor constraintEqualToConstant:108],
-            [_volumeButtonViewController.view.leadingAnchor constraintEqualToAnchor:_controlContainer.leadingAnchor constant:-27],
+            [_volumeButtonViewController.view.centerXAnchor constraintEqualToAnchor:_controlContainer.leadingAnchor constant:(fixedHeight * 0.5f)],
             [_volumeButtonViewController.view.topAnchor constraintEqualToAnchor:_controlContainer.topAnchor],
             [_playbackButtonViewController.view.heightAnchor constraintEqualToConstant:fixedHeight],
-            [_playbackButtonViewController.view.widthAnchor constraintEqualToConstant:108],
+            [_playbackButtonViewController.view.widthAnchor constraintEqualToConstant:buttonViewWidth],
             [_playbackButtonViewController.view.centerXAnchor constraintEqualToAnchor:_controlContainer.centerXAnchor],
             [_playbackButtonViewController.view.topAnchor constraintEqualToAnchor:_controlContainer.topAnchor],
             [_timerButtonViewController.view.heightAnchor constraintEqualToConstant:fixedHeight],
-            [_timerButtonViewController.view.widthAnchor constraintEqualToConstant:108],
-            [_timerButtonViewController.view.trailingAnchor constraintEqualToAnchor:_controlContainer.trailingAnchor constant:27],
+            [_timerButtonViewController.view.centerXAnchor constraintEqualToAnchor:_controlContainer.trailingAnchor constant:-(fixedHeight * 0.5f)],
             [_timerButtonViewController.view.topAnchor constraintEqualToAnchor:_controlContainer.topAnchor],
     ];
 
@@ -512,6 +520,8 @@ typedef NS_ENUM(NSUInteger, TMLayoutDirection) {
     _horizontalConstraints = @[
             _timerControlBottomAnchor,
             _volumeControlTopAnchor,
+            _timerButtonWidthAnchor,
+            _volumeButtonWidthAnchor,
             _timerControlContainerTopAnchor,
             _volumeControlContainerBottomAnchor,
             [_controlContainer.widthAnchor constraintEqualToConstant:fixedHeight],
@@ -530,15 +540,13 @@ typedef NS_ENUM(NSUInteger, TMLayoutDirection) {
             [_timerStepper.topAnchor constraintEqualToAnchor:_timerControlContainer.topAnchor constant:4],
             [_timerStepper.leadingAnchor constraintEqualToAnchor:_timerControlContainer.leadingAnchor constant:4],
             [_timerStepper.trailingAnchor constraintEqualToAnchor:_timerControlContainer.trailingAnchor constant:-4],
-            [_volumeButtonViewController.view.widthAnchor constraintEqualToConstant:108],
             [_volumeButtonViewController.view.heightAnchor constraintEqualToConstant:fixedHeight],
             [_volumeButtonViewController.view.topAnchor constraintEqualToAnchor:_controlContainer.topAnchor],
             [_volumeButtonViewController.view.centerXAnchor constraintEqualToAnchor:_controlContainer.centerXAnchor],
-            [_playbackButtonViewController.view.widthAnchor constraintEqualToConstant:108],
+            [_playbackButtonViewController.view.widthAnchor constraintEqualToConstant:buttonViewWidth],
             [_playbackButtonViewController.view.heightAnchor constraintEqualToConstant:fixedHeight],
             [_playbackButtonViewController.view.centerXAnchor constraintEqualToAnchor:_controlContainer.centerXAnchor],
             [_playbackButtonViewController.view.centerYAnchor constraintEqualToAnchor:_controlContainer.centerYAnchor],
-            [_timerButtonViewController.view.widthAnchor constraintEqualToConstant:108],
             [_timerButtonViewController.view.heightAnchor constraintEqualToConstant:fixedHeight],
             [_timerButtonViewController.view.bottomAnchor constraintEqualToAnchor:_controlContainer.bottomAnchor],
             [_timerButtonViewController.view.centerXAnchor constraintEqualToAnchor:_controlContainer.centerXAnchor]

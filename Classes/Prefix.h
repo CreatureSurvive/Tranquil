@@ -126,35 +126,6 @@ NS_INLINE __unused void OpenApplicationUrl(NSURL *url)
     });
 }
 
-NS_INLINE __unused NSArray<NSDictionary *> *AudioMetadata(NSString *bundlePath)
-{
-    NSString *bundledAudioPath = [bundlePath stringByAppendingPathComponent:@"Audio"];
-    NSArray *bundledAudioFiles = [NSFileManager.defaultManager contentsOfDirectoryAtPath:bundledAudioPath error:nil];
-
-    NSString *userProvidedAudioPath = @"/var/mobile/Library/Application Support/Tranquil/Audio";
-    NSArray *userProvidedAudioFiles = [NSFileManager.defaultManager contentsOfDirectoryAtPath:userProvidedAudioPath error:nil];
-
-    __block NSMutableArray *combinedMetadata = [NSMutableArray new];
-
-    void (^generateMetadata)(NSArray *, NSString *) = ^(NSArray *files, NSString *basePath)
-    {
-        NSArray *sortedFiles = [files sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
-
-        for (NSString *file in sortedFiles)
-        {
-            [combinedMetadata addObject:@{
-                    @"path" : [basePath stringByAppendingPathComponent:file],
-                    @"name" : [file stringByDeletingPathExtension]
-            }];
-        }
-    };
-
-    generateMetadata(bundledAudioFiles, bundledAudioPath);
-    generateMetadata(userProvidedAudioFiles, userProvidedAudioPath);
-
-    return combinedMetadata;
-}
-
 NS_INLINE __unused NSArray<NSString *> *DownloadableAudioFileNames(void)
 {
     static NSArray *downloadableAudioFileNames;
@@ -180,6 +151,7 @@ NS_INLINE __unused NSArray<NSDictionary *> *DownloadableAudioMetadata(void)
 
     if (!downloadableAudioMetadata) {
 
+        // TODO migrate downloadable content to separate directory for improved organization
         downloadableAudioMetadata = @[
             @{
                     @"name" : @"INFRA_NOISE",
@@ -217,6 +189,61 @@ NS_INLINE __unused BOOL DownloadableContentAvailable(void)
     }
 
     return downloadsAvailable;
+}
+
+NS_INLINE __unused NSArray<NSDictionary *> *AudioMetadataIncludingDLC(BOOL includeDownloadable)
+{
+    NSString *bundledAudioPath = [ModuleBundle(NO).bundlePath stringByAppendingPathComponent:@"Audio"];
+    NSArray *bundledAudioFiles = [NSFileManager.defaultManager contentsOfDirectoryAtPath:bundledAudioPath error:nil];
+
+    NSString *userProvidedAudioPath = @"/var/mobile/Library/Application Support/Tranquil/Audio";
+    NSArray *userProvidedAudioFiles = [NSFileManager.defaultManager contentsOfDirectoryAtPath:userProvidedAudioPath error:nil];
+
+    __block NSMutableSet *uniquePaths = [NSMutableSet new];
+    __block NSMutableArray *combinedMetadata = [NSMutableArray new];
+
+    void (^generateMetadata)(NSArray *, NSString *) = ^(NSArray *files, NSString *basePath)
+    {
+        for (NSString *file in files)
+        {
+            NSString *fullPath = [basePath stringByAppendingPathComponent:file];
+
+            if ([uniquePaths containsObject:fullPath]) continue;
+            [uniquePaths addObject:fullPath];
+            [combinedMetadata addObject:@{
+                    @"path" : fullPath,
+                    @"name" : [file stringByDeletingPathExtension]
+            }];
+        }
+    };
+
+    generateMetadata(bundledAudioFiles, bundledAudioPath);
+    generateMetadata(userProvidedAudioFiles, userProvidedAudioPath);
+
+    if (includeDownloadable) {
+
+        generateMetadata(DownloadableAudioFileNames(), userProvidedAudioPath);
+    }
+
+    NSArray *downloadableNames = DownloadableAudioFileNames();
+    // sort metadata alphabetically, then by asset type (1:bundled 2:imported 3:downloadable)
+    NSSortDescriptor *name = [NSSortDescriptor sortDescriptorWithKey:@"path" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
+    NSSortDescriptor *path = [NSSortDescriptor sortDescriptorWithKey:@"path" ascending:YES comparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
+        BOOL isDownloadable1 = [downloadableNames containsObject:obj1.lastPathComponent];
+        BOOL isDownloadable2 = [downloadableNames containsObject:obj2.lastPathComponent];
+        return isDownloadable2 && !isDownloadable1 ? NSOrderedAscending :
+               isDownloadable1 && !isDownloadable2 ? NSOrderedDescending :
+               NSOrderedSame;
+    }];
+
+    [combinedMetadata sortUsingDescriptors:@[path, name]];
+
+    return combinedMetadata;
+}
+
+NS_INLINE __unused NSArray<NSDictionary *> *AudioMetadata(void)
+{
+    return AudioMetadataIncludingDLC(NO);
 }
 
 NS_INLINE __unused UIAlertController *GenericErrorAlert(NSError *error, UIViewController *controller)

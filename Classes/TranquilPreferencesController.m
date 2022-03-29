@@ -100,7 +100,7 @@ TranquilPreferencesController *loadedController;
 
 - (NSArray *)audioMetadata
 {
-	return AudioMetadata([NSBundle bundleForClass:self.class].bundlePath);
+	return AudioMetadata();
 }
 
 - (NSArray *)downloadableMetadata
@@ -110,8 +110,7 @@ TranquilPreferencesController *loadedController;
 
 - (NSArray *)activeSoundTitles
 {
-	NSArray *metadata = [self audioMetadata];
-	NSArray *downloadableMetadata = [self downloadableMetadata];
+	NSArray *metadata = AudioMetadataIncludingDLC(YES);
 	NSMutableArray *titles = [NSMutableArray new];
 
 	for (NSDictionary *entry in metadata) 
@@ -119,30 +118,16 @@ TranquilPreferencesController *loadedController;
 		[titles addObject:Localize(entry[@"name"])];
 	}
 
-	for (NSDictionary *entry in downloadableMetadata)
-	{
-		NSString *name = Localize(entry[@"name"]);
-		if ([titles containsObject:name]) continue;
-		[titles addObject:name];
-	}
-
 	return titles;
 }
 
 - (NSArray *)activeSoundValues
 {
-	NSArray *metadata = [self audioMetadata];
-	NSArray *downloadableMetadata = [self downloadableMetadata];
+	NSArray *metadata = AudioMetadataIncludingDLC(YES);
 	NSMutableArray *values = [NSMutableArray new];
 
 	for (NSDictionary *entry in metadata) 
 	{
-		[values addObject:entry[@"path"]];
-	}
-
-	for (NSDictionary *entry in downloadableMetadata)
-	{
-		if ([values containsObject:entry[@"path"]]) continue;
 		[values addObject:entry[@"path"]];
 	}
 
