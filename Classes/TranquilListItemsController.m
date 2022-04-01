@@ -15,6 +15,18 @@
 
 @implementation TranquilListItemsController
 
+
+- (NSMutableArray *)itemsFromParent
+{
+    return [self _groupedItemsForSpecifiers:[super itemsFromParent]];
+}
+
+- (NSMutableArray *)itemsFromDataSource
+{
+    return [self _groupedItemsForSpecifiers:[super itemsFromDataSource]];
+}
+
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     PSTableCell *cell = (PSTableCell *)[super tableView:tableView cellForRowAtIndexPath:indexPath];
@@ -33,7 +45,7 @@
     NSString *path = specifier.values.firstObject;
     NSMutableArray<UIContextualAction *> *actions = [NSMutableArray new];
 
-    if ([path hasPrefix:@"/var/mobile/Library/Application Support/Tranquil/Audio"]) {
+    if ([path hasPrefix:TranquilSupportPath]) {
 
         if ([NSFileManager.defaultManager fileExistsAtPath:path]) {
 
@@ -44,7 +56,7 @@
             }]];
         }
 
-        if (![DownloadableAudioFileNames() containsObject:path.lastPathComponent]) {
+        if (![path hasPrefix:TranquilDownloadableAudioPath]) {
 
             [actions addObject:[UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:Localize(@"SWIPE_ACTION_RENAME_TITLE") handler:^(UIContextualAction *action, __kindof UIView *sourceView, void (^completionHandler)(BOOL)) {
 
@@ -84,7 +96,7 @@
 
     if ([DownloadableAudioFileNames() containsObject:identifier]) {
 
-        NSString *destinationPath = [@"/var/mobile/Library/Application Support/Tranquil/Audio" stringByAppendingPathComponent:identifier];
+        NSString *destinationPath = [TranquilDownloadableAudioPath stringByAppendingPathComponent:identifier];
 
         if ([NSFileManager.defaultManager fileExistsAtPath:destinationPath]) {
 
@@ -188,7 +200,7 @@
             [self _selectDefaultValue];
         }
 
-        [(PSListController *) self.parentController reloadSpecifier:self.specifier];
+        [(PSListController *) self.parentController reloadSpecifiers];
 
         if ([self audioFileNeedsDownload:indexPath]) {
 
@@ -284,8 +296,39 @@
 
     if (notify) {
 
-        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.creaturecoding.tranquil/preferences-changed"), NULL, NULL, TRUE);
+        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR(TranquilPreferencesChanged), NULL, NULL, TRUE);
     }
+}
+
+- (NSMutableArray *)_groupedItemsForSpecifiers:(NSMutableArray *)specifiers
+{
+    NSMutableArray *items = [specifiers mutableCopy];
+
+    __block NSUInteger importedIndex = 0;
+    __block NSUInteger downloadableIndex = 0;
+    [specifiers enumerateObjectsUsingBlock:^(PSSpecifier *obj, NSUInteger idx, BOOL *stop) {
+        if ([obj.values.firstObject hasPrefix:TranquilImportedAudioPath] && importedIndex == 0) {
+
+            importedIndex = idx;
+        }
+        else if ([obj.values.firstObject hasPrefix:TranquilDownloadableAudioPath] && downloadableIndex == 0) {
+
+            downloadableIndex = idx;
+            *stop = YES;
+        }
+    }];
+
+    PSSpecifier *bundledGroup = [PSSpecifier groupSpecifierWithName:Localize(@"BUNDLED_GROUP_TITLE")];
+    PSSpecifier *importedGroup = [PSSpecifier groupSpecifierWithName:Localize(@"IMPORTED_GROUP_TITLE")];
+    PSSpecifier *downloadedGroup = [PSSpecifier groupSpecifierWithName:Localize(@"DOWNLOADABLE_GROUP_TITLE")];
+
+    [downloadedGroup setProperty:LocalizeWithTable(@"ACTIVE_SOUND_LIST_FOOTER_MESSAGE", @"Preferences") forKey:PSFooterTextGroupKey];
+
+    [items insertObject:downloadedGroup atIndex:downloadableIndex];
+    [items insertObject:importedGroup atIndex:(importedIndex != 0 ? importedIndex : downloadableIndex)];
+    items[0] = bundledGroup;
+
+    return items;
 }
 
 @end

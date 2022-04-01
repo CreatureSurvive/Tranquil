@@ -34,7 +34,7 @@
         _backgroundViewController = [TranquilModuleBackgroundViewController new];
         _backgroundViewController.module = self;
 
-        _preferences = [[NSUserDefaults alloc] initWithSuiteName:@"com.creaturecoding.tranquil"];
+        _preferences = [[NSUserDefaults alloc] initWithSuiteName:TranquilBundleIdentifier];
 
         // disable playback after respring / reload
         [_preferences setBool:NO forKey:@"kBackgroundSoundsActive"];
@@ -131,7 +131,7 @@
 
 - (void)updatePreferencesExternally
 {
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.creaturecoding.tranquil/preferences-changed-externally"), NULL, NULL, TRUE);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR(TranquilPreferencesChangedExternal), NULL, NULL, TRUE);
 }
 
 - (void)updateDefaults
@@ -237,12 +237,22 @@
 
 void preferencesChanged(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
-	CCUIModuleInstance* moduleInstance = [[NSClassFromString(@"CCUIModuleInstanceManager") sharedInstance] instanceForModuleIdentifier:@"com.creaturecoding.tranquil"];
+	CCUIModuleInstance* moduleInstance = [[NSClassFromString(@"CCUIModuleInstanceManager") sharedInstance] instanceForModuleIdentifier:TranquilBundleIdentifier];
 	[(TranquilModule*)moduleInstance.module updatePreferences];
 }
 
 __attribute__((constructor))
 static void init(void)
 {
-	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, preferencesChanged, CFSTR("com.creaturecoding.tranquil/preferences-changed"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+    NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:TranquilBundleIdentifier];
+    NSString *activeSound = [defaults stringForKey:@"kActiveSound"];
+
+    // migrate active sound preference from Tranquil/Audio to Tranquil/Downloadable if needed
+    if (activeSound && [activeSound hasPrefix:TranquilImportedAudioPath] && [DownloadableAudioFileNames() containsObject:activeSound.lastPathComponent]) {
+
+        activeSound = [TranquilDownloadableAudioPath stringByAppendingPathComponent:activeSound.lastPathComponent];
+        [defaults setObject:activeSound forKey:@"kActiveSound"];
+    }
+
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, preferencesChanged, CFSTR(TranquilPreferencesChanged), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
 }

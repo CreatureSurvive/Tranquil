@@ -51,7 +51,7 @@ TranquilPreferencesController *loadedController;
 	[super viewDidLoad];
 
 	loadedController = self;
-    _preferences = [[NSUserDefaults alloc] initWithSuiteName:@"com.creaturecoding.tranquil"];
+    _preferences = [[NSUserDefaults alloc] initWithSuiteName:TranquilBundleIdentifier];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -95,7 +95,7 @@ TranquilPreferencesController *loadedController;
 
 - (NSURL *)userImportedSoundsDirectoryURL
 {
-	return [NSURL fileURLWithPath:@"/var/mobile/Library/Application Support/Tranquil/Audio"];
+	return [NSURL fileURLWithPath:TranquilImportedAudioPath];
 }
 
 - (NSArray *)audioMetadata
@@ -167,7 +167,7 @@ TranquilPreferencesController *loadedController;
 - (void)playSampleWithMedia
 {
     [_preferences setBool:YES forKey:@"kPauseForSample"];
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.creaturecoding.tranquil/preferences-changed"), NULL, NULL, TRUE);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR(TranquilPreferencesChanged), NULL, NULL, TRUE);
 
     PSSpecifier *stopSampleSpecifier = [PSSpecifier preferenceSpecifierNamed:Localize(@"STOP_SAMPLE_BUTTON_LABEL") target:self set:NULL get:NULL detail:Nil cell:PSButtonCell edit:Nil];
 	stopSampleSpecifier->action = @selector(stopSampleWithMedia);
@@ -212,7 +212,7 @@ TranquilPreferencesController *loadedController;
 	[[AVAudioSession sharedInstance] setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
 
     [_preferences setBool:NO forKey:@"kPauseForSample"];
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.creaturecoding.tranquil/preferences-changed"), NULL, NULL, TRUE);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR(TranquilPreferencesChanged), NULL, NULL, TRUE);
 }
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
@@ -296,7 +296,6 @@ TranquilPreferencesController *loadedController;
 
 			NSError *error;
 			NSURL *destination = [NSURL fileURLWithPath:newFileName relativeToURL:[self userImportedSoundsDirectoryURL]];
-//			[NSFileManager.defaultManager copyItemAtURL:url toURL:destination error:&error];
 			[NSFileManager.defaultManager moveItemAtURL:url toURL:destination error:&error];
 
 			// error copying file
@@ -333,5 +332,5 @@ void preferencesChangedExternally(CFNotificationCenterRef center, void *observer
 __attribute__((constructor))
 static void init(void)
 {
-	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, preferencesChangedExternally, CFSTR("com.creaturecoding.tranquil/preferences-changed-externally"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, preferencesChangedExternally, CFSTR(TranquilPreferencesChangedExternal), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
 }

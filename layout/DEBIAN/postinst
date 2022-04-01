@@ -1,7 +1,15 @@
 #!/bin/sh
 
 mkdir -p /var/mobile/Library/Application\ Support/Tranquil/Audio
+mkdir -p /var/mobile/Library/Application\ Support/Tranquil/Downloadable
 chmod -R 0755 /var/mobile/Library/Application\ Support/Tranquil
 chown -R mobile:mobile /var/mobile/Library/Application\ Support/Tranquil
+
+[ ! -f "/var/mobile/Library/Application Support/Tranquil/Audio/INFRA_NOISE.m4a" ] || mv "/var/mobile/Library/Application Support/Tranquil/Audio/INFRA_NOISE.m4a" "/var/mobile/Library/Application Support/Tranquil/Downloadable/INFRA_NOISE.m4a"
+[ ! -f "/var/mobile/Library/Application Support/Tranquil/Audio/ULTRA_NOISE.m4a" ] || mv "/var/mobile/Library/Application Support/Tranquil/Audio/ULTRA_NOISE.m4a" "/var/mobile/Library/Application Support/Tranquil/Downloadable/ULTRA_NOISE.m4a"
+[ ! -f "/var/mobile/Library/Application Support/Tranquil/Audio/FLOWING_STREAM.m4a" ] || mv "/var/mobile/Library/Application Support/Tranquil/Audio/FLOWING_STREAM.m4a" "/var/mobile/Library/Application Support/Tranquil/Downloadable/FLOWING_STREAM.m4a"
+[ ! -f "/var/mobile/Library/Application Support/Tranquil/Audio/LIGHT_RAIN.m4a" ] || mv "/var/mobile/Library/Application Support/Tranquil/Audio/LIGHT_RAIN.m4a" "/var/mobile/Library/Application Support/Tranquil/Downloadable/LIGHT_RAIN.m4a"
+[ ! -f "/var/mobile/Library/Application Support/Tranquil/Audio/OCEAN_WAVES.m4a" ] || mv "/var/mobile/Library/Application Support/Tranquil/Audio/OCEAN_WAVES.m4a" "/var/mobile/Library/Application Support/Tranquil/Downloadable/OCEAN_WAVES.m4a"
+[ ! -f "/var/mobile/Library/Application Support/Tranquil/Audio/THUNDER_STORM.m4a" ] || mv "/var/mobile/Library/Application Support/Tranquil/Audio/THUNDER_STORM.m4a" "/var/mobile/Library/Application Support/Tranquil/Downloadable/THUNDER_STORM.m4a"
 
 exit 0;

@@ -22,6 +22,11 @@
 "STOP_SAMPLE_BUTTON_LABEL" = "Stop Sample";
 "PLAY_SAMPLE_BUTTON_LABEL" = "Play Sample";
 
+/* preferences sound list group titles */
+"BUNDLED_GROUP_TITLE" = "BUNDLED";
+"IMPORTED_GROUP_TITLE" = "IMPORTED";
+"DOWNLOADABLE_GROUP_TITLE" = "DOWNLOADABLE";
+
 /* sound import rename alert */
 "RENAME_FILE_TITLE" = "Rename File";
 "RENAME_FILE_MESSAGE" = "You can change the name to your liking, or leave it as is. The name you choose here will be the display name of the sound.";

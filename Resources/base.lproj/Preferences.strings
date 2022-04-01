@@ -18,7 +18,7 @@
 "BACKGROUND_SOUNDS_SWITCH_TITLE" = "Background Sounds";
 
 "ACTIVE_SOUND_LIST_TITLE" = "Sound";
-"ACTIVE_SOUND_LIST_FOOTER_MESSAGE" = "\nSwipe left on downloaded, or imported sounds for more options.\n\nDefault bundled or downloaded sounds cannot be renamed, as they use localized names. User imported sounds can be renamed or deleted.";
+"ACTIVE_SOUND_LIST_FOOTER_MESSAGE" = "\nSwipe left on downloaded, or imported sounds for more options.\n\nBundled or downloaded sounds cannot be renamed, as they use localized names. User imported sounds can be renamed or deleted.";
 
 "VOLUME_SLIDER_TITLE" = "Volume";
 

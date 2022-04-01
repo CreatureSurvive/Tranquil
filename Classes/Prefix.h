@@ -25,13 +25,23 @@
 // return negative value if condition is true
 #define NEGATE_IF(x, c) (c == true ? -x : x)
 
+#define TranquilBundleIdentifier @"com.creaturecoding.tranquil"
+#define TranquilPreferencesChanged "com.creaturecoding.tranquil/preferences-changed"
+#define TranquilPreferencesChangedExternal "com.creaturecoding.tranquil/preferences-changed-externally"
+
+#define TranquilBundlePath @"/Library/ControlCenter/Bundles/Tranquil.bundle"
+#define TranquilSupportPath @"/var/mobile/Library/Application Support/Tranquil/"
+#define TranquilBundledAudioPath @"/Library/ControlCenter/Bundles/Tranquil.bundle/Audio"
+#define TranquilImportedAudioPath @"/var/mobile/Library/Application Support/Tranquil/Audio/"
+#define TranquilDownloadableAudioPath @"/var/mobile/Library/Application Support/Tranquil/Downloadable/"
+
 NS_INLINE __unused NSBundle *ModuleBundle(BOOL loadIfNeeded)
 {
     static NSBundle *moduleBundle;
 
     if (!moduleBundle) {
 
-        moduleBundle = [NSBundle bundleWithPath:@"/Library/ControlCenter/Bundles/Tranquil.bundle"];
+        moduleBundle = [NSBundle bundleWithPath:TranquilBundlePath];
     }
 
     if (loadIfNeeded && ![moduleBundle isLoaded]) {
@@ -54,7 +64,7 @@ NS_INLINE __unused NSDictionary *Defaults(void)
             @"kPlaybackVolume" : @0.6,
             @"kPlaybackVolumeWithMedia" : @0.2,
             @"kUseWhenMediaIsPlaying" : @YES,
-            @"kActiveSound" : [ModuleBundle(NO).bundlePath stringByAppendingPathComponent:@"Audio/BROWN_NOISE.m4a"]
+            @"kActiveSound" : [TranquilBundledAudioPath stringByAppendingPathComponent:@"BROWN_NOISE.m4a"]
         };
     }
 
@@ -151,28 +161,16 @@ NS_INLINE __unused NSArray<NSDictionary *> *DownloadableAudioMetadata(void)
 
     if (!downloadableAudioMetadata) {
 
-        // TODO migrate downloadable content to separate directory for improved organization
-        downloadableAudioMetadata = @[
-            @{
-                    @"name" : @"INFRA_NOISE",
-                    @"path" : @"/var/mobile/Library/Application Support/Tranquil/Audio/INFRA_NOISE.m4a"
-            }, @{
-                    @"name" : @"ULTRA_NOISE",
-                    @"path" : @"/var/mobile/Library/Application Support/Tranquil/Audio/ULTRA_NOISE.m4a"
-            }, @{
-                    @"name" : @"FLOWING_STREAM",
-                    @"path" : @"/var/mobile/Library/Application Support/Tranquil/Audio/FLOWING_STREAM.m4a"
-            }, @{
-                    @"name" : @"LIGHT_RAIN",
-                    @"path" : @"/var/mobile/Library/Application Support/Tranquil/Audio/LIGHT_RAIN.m4a"
-            }, @{
-                    @"name" : @"OCEAN_WAVES",
-                    @"path" : @"/var/mobile/Library/Application Support/Tranquil/Audio/OCEAN_WAVES.m4a"
-            }, @{
-                    @"name" : @"THUNDER_STORM",
-                    @"path" : @"/var/mobile/Library/Application Support/Tranquil/Audio/THUNDER_STORM.m4a"
-            }
-        ];
+        NSMutableArray *metadata = [NSMutableArray new];
+        for (NSString *fileName in DownloadableAudioFileNames())
+        {
+            [metadata addObject:@{
+                    @"name" : [fileName stringByDeletingPathExtension],
+                    @"path" : [TranquilDownloadableAudioPath stringByAppendingPathComponent:fileName]
+            }];
+        }
+
+        downloadableAudioMetadata = metadata.copy;
     }
 
     return downloadableAudioMetadata;
@@ -193,11 +191,9 @@ NS_INLINE __unused BOOL DownloadableContentAvailable(void)
 
 NS_INLINE __unused NSArray<NSDictionary *> *AudioMetadataIncludingDLC(BOOL includeDownloadable)
 {
-    NSString *bundledAudioPath = [ModuleBundle(NO).bundlePath stringByAppendingPathComponent:@"Audio"];
-    NSArray *bundledAudioFiles = [NSFileManager.defaultManager contentsOfDirectoryAtPath:bundledAudioPath error:nil];
-
-    NSString *userProvidedAudioPath = @"/var/mobile/Library/Application Support/Tranquil/Audio";
-    NSArray *userProvidedAudioFiles = [NSFileManager.defaultManager contentsOfDirectoryAtPath:userProvidedAudioPath error:nil];
+    NSArray *bundledAudioFiles = [NSFileManager.defaultManager contentsOfDirectoryAtPath:TranquilBundledAudioPath error:nil];
+    NSArray *importedAudioFiles = [NSFileManager.defaultManager contentsOfDirectoryAtPath:TranquilImportedAudioPath error:nil];
+    NSArray *downloadedAudioFiles = [NSFileManager.defaultManager contentsOfDirectoryAtPath:TranquilDownloadableAudioPath error:nil];
 
     __block NSMutableSet *uniquePaths = [NSMutableSet new];
     __block NSMutableArray *combinedMetadata = [NSMutableArray new];
@@ -217,26 +213,18 @@ NS_INLINE __unused NSArray<NSDictionary *> *AudioMetadataIncludingDLC(BOOL inclu
         }
     };
 
-    generateMetadata(bundledAudioFiles, bundledAudioPath);
-    generateMetadata(userProvidedAudioFiles, userProvidedAudioPath);
+    generateMetadata(bundledAudioFiles, TranquilBundledAudioPath);
+    generateMetadata(importedAudioFiles, TranquilImportedAudioPath);
+    generateMetadata(downloadedAudioFiles, TranquilDownloadableAudioPath);
 
     if (includeDownloadable) {
 
-        generateMetadata(DownloadableAudioFileNames(), userProvidedAudioPath);
+        generateMetadata(DownloadableAudioFileNames(), TranquilDownloadableAudioPath);
     }
 
-    NSArray *downloadableNames = DownloadableAudioFileNames();
-    // sort metadata alphabetically, then by asset type (1:bundled 2:imported 3:downloadable)
-    NSSortDescriptor *name = [NSSortDescriptor sortDescriptorWithKey:@"path" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
-    NSSortDescriptor *path = [NSSortDescriptor sortDescriptorWithKey:@"path" ascending:YES comparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
-        BOOL isDownloadable1 = [downloadableNames containsObject:obj1.lastPathComponent];
-        BOOL isDownloadable2 = [downloadableNames containsObject:obj2.lastPathComponent];
-        return isDownloadable2 && !isDownloadable1 ? NSOrderedAscending :
-               isDownloadable1 && !isDownloadable2 ? NSOrderedDescending :
-               NSOrderedSame;
-    }];
-
-    [combinedMetadata sortUsingDescriptors:@[path, name]];
+    [combinedMetadata sortUsingDescriptors:@[
+            [NSSortDescriptor sortDescriptorWithKey:@"path" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]
+    ]];
 
     return combinedMetadata;
 }

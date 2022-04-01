@@ -125,7 +125,12 @@
     if (DownloadableContentAvailable()) {
 
         [self addActionWithTitle:Localize(@"DOWNLOADS_AVAILABLE_TITLE") glyph:[UIImage tranquil_moduleImageNamed:@"Download"] handler:^{
-            NSString *urlString = [NSString stringWithFormat:@"prefs:root=ControlCenter&path=Tranquil/activeSoundSpecifier"];
+            NSString *urlString;
+            if (@available(iOS 13, *)) {
+                urlString = [NSString stringWithFormat:@"prefs:root=ControlCenter&path=Tranquil/activeSoundSpecifier"];
+            } else {
+                urlString = [NSString stringWithFormat:@"prefs:root=ControlCenter&path=CUSTOMIZE_CONTROLS/Tranquil/activeSoundSpecifier"];
+            }
             NSURL *url = [NSURL URLWithString:[urlString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLFragmentAllowedCharacterSet]]];
 
             OpenApplicationUrl(url);
@@ -134,7 +139,12 @@
     }
 
     [self setFooterButtonTitle:Localize(@"PROJECT_SETTINGS_TITLE") handler:^{
-        NSString *urlString = [NSString stringWithFormat:@"prefs:root=ControlCenter&path=Tranquil"];
+        NSString *urlString;
+        if (@available(iOS 13, *)) {
+            urlString = [NSString stringWithFormat:@"prefs:root=ControlCenter&path=Tranquil"];
+        } else {
+            urlString = [NSString stringWithFormat:@"prefs:root=ControlCenter&path=CUSTOMIZE_CONTROLS/Tranquil"];
+        }
         NSURL *url = [NSURL URLWithString:[urlString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLFragmentAllowedCharacterSet]]];
 
         OpenApplicationUrl(url);

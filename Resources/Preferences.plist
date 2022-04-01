@@ -102,6 +102,8 @@
 				<string>com.creaturecoding.tranquil</string>
 				<key>default</key>
 				<real>0.6</real>
+				<key>iconImageShouldFlipForRightToLeft</key>
+				<true/>
 			</dict>
 
 			<dict>
@@ -155,7 +157,9 @@
 				<key>defaults</key>
 				<string>com.creaturecoding.tranquil</string>
 				<key>default</key>
-				<real>0.6</real>
+				<real>0.2</real>
+				<key>iconImageShouldFlipForRightToLeft</key>
+				<true/>
 			</dict>
 
 			<dict>
