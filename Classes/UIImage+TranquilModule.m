@@ -7,6 +7,7 @@
 //
 
 #import "UIImage+TranquilModule.h"
+#import "rootless.h"
 
 
 @implementation UIImage (TranquilModule)
@@ -17,7 +18,7 @@
 
     if (!moduleBundle) {
 
-        moduleBundle = [NSBundle bundleWithPath:@"/Library/ControlCenter/Bundles/Tranquil.bundle"];
+        moduleBundle = [NSBundle bundleWithPath:ROOT_PATH_NS(@"/Library/ControlCenter/Bundles/Tranquil.bundle")];
     }
 
     return [UIImage imageNamed:imageName inBundle:moduleBundle compatibleWithTraitCollection:nil];

@@ -13,6 +13,14 @@
 + (MTMaterialView *)materialViewWithRecipe:(NSInteger)recipe options:(NSUInteger)options;
 @end
 
+@interface MTVisualStylingProvider : NSObject
++ (Class)_visualStylingClass;
++ (id)_visualStylingProviderForStyleSetNamed:(NSString *)styleSetName inBundle:(NSBundle *)bundle;
++ (id)_visualStylingProviderForRecipe:(NSInteger)recipe andCategory:(NSInteger)category;
++ (id)_visualStylingProviderForRecipeNamed:(NSString *)recipeName andCategory:(NSInteger)category;
++ (id)_visualStylingProviderForRecipe:(NSInteger)recipe category:(NSInteger)category andUserInterfaceStyle:(NSInteger)arg3;
+@end
+
 NS_INLINE __unused MTMaterialView *ControlCenterMaterialWithConfiguration(NSInteger configuration, NSUInteger legacyOptions)
 {
     NSInteger controlCenterRecipe = 4;
@@ -40,3 +48,9 @@ NS_INLINE __unused MTMaterialView *ControlCenterVibrantLightMaterial()
 {
     return ControlCenterMaterialWithConfiguration(3, 32);
 }
+
+NS_INLINE __unused MTVisualStylingProvider *ControlCenterStylingProvider()
+{
+    Class _MTVisualStylingProvider = NSClassFromString(@"MTVisualStylingProvider");
+    return [_MTVisualStylingProvider _visualStylingProviderForStyleSetNamed:@"moduleStyle" inBundle:[NSBundle bundleForClass:_MTVisualStylingProvider]];
+};

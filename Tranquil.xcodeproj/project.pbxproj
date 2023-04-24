@@ -15,6 +15,7 @@
 		9B2414483F94C0D75BABD42F /* UIImage+TranquilModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B2419FA6A9040350B18D471 /* UIImage+TranquilModule.m */; };
 		9B24156C8744A9091EE0A050 /* TranquilListItemsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B24152CFF9EB280E153A1D0 /* TranquilListItemsController.m */; };
 		9B2415DDA47913FD29F10768 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9B241BAB42F87A769EC46B28 /* Localizable.strings */; };
+		9B2416871E6664B8DC296A5F /* build.sh in Resources */ = {isa = PBXBuildFile; fileRef = 9B2413623ADF4A0B5439E6AA /* build.sh */; };
 		9B2416FD99077DD2C1FD92A3 /* generate_images.sh in Resources */ = {isa = PBXBuildFile; fileRef = 9B24156C529A8F1A35393F3B /* generate_images.sh */; };
 		9B2417B6246CABEF9018DEF9 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9B2417C450C8CA55CA1DA96C /* Preferences.strings */; };
 		9B2419788480CD62E525DC1E /* generate_assets.sh in Resources */ = {isa = PBXBuildFile; fileRef = 9B241C29499BF1A712E3067B /* generate_assets.sh */; };
@@ -23,6 +24,8 @@
 		9B241F30B2DCF44215F88D21 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9B241964DD71753B34BF6007 /* Preferences.strings */; };
 		9B241F8C62D567BD2C00499F /* AppIcon-large.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B241F6377802F090A4C5825 /* AppIcon-large.png */; };
 		B827931F27DEED580079CDB5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = B827931E27DEED580079CDB5 /* README.md */; };
+		B83E35502800C86C00F0F37E /* TranquilRoutePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E354F2800C86C00F0F37E /* TranquilRoutePickerView.m */; };
+		B83E35532800DA3900F0F37E /* TranquilRoutingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B83E35522800DA3900F0F37E /* TranquilRoutingViewController.m */; };
 		B86FC5C32663C9840011E4AF /* Preferences.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B86FC5BD2663C8750011E4AF /* Preferences.framework */; };
 		B86FC5C42663C9840011E4AF /* Preferences.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B86FC5BD2663C8750011E4AF /* Preferences.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B8D2D9F527DECBB2005B269E /* TranquilModuleBackgroundViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B8D2D9EA27DECBB2005B269E /* TranquilModuleBackgroundViewController.m */; };
@@ -65,6 +68,7 @@
 		9B24111CA0576F1FB8E184C8 /* base */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = base; path = Preferences.strings; sourceTree = "<group>"; };
 		9B2411AAFA56A82F19F067C4 /* TranquilListItemsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TranquilListItemsController.h; sourceTree = "<group>"; };
 		9B2411E2A36F0285265CF5FF /* Material.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Material.h; sourceTree = "<group>"; };
+		9B2413623ADF4A0B5439E6AA /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
 		9B2413E4E51F2E61E96CA31D /* Haptic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Haptic.h; sourceTree = "<group>"; };
 		9B24144133A17532E9FBBE76 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		9B2414DAEDE40FE0BDBA8B90 /* base */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = base; path = InfoPlist.strings; sourceTree = "<group>"; };
@@ -80,6 +84,7 @@
 		9B24179B9ABB9248A9084811 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9B2417C97A4E7906C0029005 /* TranquilModuleStepper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TranquilModuleStepper.h; sourceTree = "<group>"; };
 		9B2418489E211BB277EC40A9 /* TranquilModuleStepper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TranquilModuleStepper.m; sourceTree = "<group>"; };
+		9B2419997FFDBAA3974D8DA7 /* rootless.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rootless.h; sourceTree = "<group>"; };
 		9B2419FA6A9040350B18D471 /* UIImage+TranquilModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+TranquilModule.m"; sourceTree = "<group>"; };
 		9B241A273BDF61EFB0D81D17 /* UIImage+TranquilModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+TranquilModule.h"; sourceTree = "<group>"; };
 		9B241A64DBC2000EC8C2BFD1 /* Prefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Prefix.h; sourceTree = "<group>"; };
@@ -87,6 +92,11 @@
 		9B241EA4C8AC1188EBD62A66 /* postinst */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = postinst; sourceTree = "<group>"; };
 		9B241F6377802F090A4C5825 /* AppIcon-large.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-large.png"; sourceTree = "<group>"; };
 		B827931E27DEED580079CDB5 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		B83E354D2800B68D00F0F37E /* AVRouting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVRouting.h; sourceTree = "<group>"; };
+		B83E354E2800C86C00F0F37E /* TranquilRoutePickerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TranquilRoutePickerView.h; sourceTree = "<group>"; };
+		B83E354F2800C86C00F0F37E /* TranquilRoutePickerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TranquilRoutePickerView.m; sourceTree = "<group>"; };
+		B83E35512800DA3900F0F37E /* TranquilRoutingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TranquilRoutingViewController.h; sourceTree = "<group>"; };
+		B83E35522800DA3900F0F37E /* TranquilRoutingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TranquilRoutingViewController.m; sourceTree = "<group>"; };
 		B86FC5BD2663C8750011E4AF /* Preferences.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Preferences.framework; path = Frameworks/Preferences.framework; sourceTree = "<group>"; };
 		B871CD412651D1A40058F1C2 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		B871CD442651D2180058F1C2 /* control */ = {isa = PBXFileReference; lastKnownFileType = text; path = control; sourceTree = "<group>"; };
@@ -140,6 +150,7 @@
 				9B2415D2CD3B09790CF02185 /* Assets.xcassets */,
 				9B241C29499BF1A712E3067B /* generate_assets.sh */,
 				9B24156C529A8F1A35393F3B /* generate_images.sh */,
+				9B2413623ADF4A0B5439E6AA /* build.sh */,
 			);
 			sourceTree = "<group>";
 		};
@@ -201,27 +212,33 @@
 		B8D2D9E727DECA76005B269E /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				B8D2D9F127DECBB2005B269E /* TranquilModuleContentViewController.h */,
-				B8D2D9EB27DECBB2005B269E /* TranquilModuleContentViewController.m */,
+				B83E354D2800B68D00F0F37E /* AVRouting.h */,
+				9B2413E4E51F2E61E96CA31D /* Haptic.h */,
+				9B2411E2A36F0285265CF5FF /* Material.h */,
+				9B241A64DBC2000EC8C2BFD1 /* Prefix.h */,
+				9B2411AAFA56A82F19F067C4 /* TranquilListItemsController.h */,
+				9B24152CFF9EB280E153A1D0 /* TranquilListItemsController.m */,
 				B8D2D9EF27DECBB2005B269E /* TranquilMediaPlayer.h */,
 				B8D2D9EE27DECBB2005B269E /* TranquilMediaPlayer.m */,
 				B8D2D9E927DECBB2005B269E /* TranquilModule.h */,
 				B8D2D9F427DECBB2005B269E /* TranquilModule.m */,
 				B8D2D9F327DECBB2005B269E /* TranquilModuleBackgroundViewController.h */,
 				B8D2D9EA27DECBB2005B269E /* TranquilModuleBackgroundViewController.m */,
-				B8D2D9F227DECBB2005B269E /* TranquilPreferencesController.h */,
-				B8D2D9EC27DECBB2005B269E /* TranquilPreferencesController.m */,
-				9B241A64DBC2000EC8C2BFD1 /* Prefix.h */,
-				9B2417C97A4E7906C0029005 /* TranquilModuleStepper.h */,
-				9B2418489E211BB277EC40A9 /* TranquilModuleStepper.m */,
-				9B2419FA6A9040350B18D471 /* UIImage+TranquilModule.m */,
-				9B241A273BDF61EFB0D81D17 /* UIImage+TranquilModule.h */,
-				9B2413E4E51F2E61E96CA31D /* Haptic.h */,
+				B8D2D9F127DECBB2005B269E /* TranquilModuleContentViewController.h */,
+				B8D2D9EB27DECBB2005B269E /* TranquilModuleContentViewController.m */,
 				9B2416C1BBC5F00B90881A79 /* TranquilModuleSlider.h */,
 				9B2416D202776D73AF7C3ABD /* TranquilModuleSlider.m */,
-				9B2411E2A36F0285265CF5FF /* Material.h */,
-				9B2411AAFA56A82F19F067C4 /* TranquilListItemsController.h */,
-				9B24152CFF9EB280E153A1D0 /* TranquilListItemsController.m */,
+				9B2417C97A4E7906C0029005 /* TranquilModuleStepper.h */,
+				9B2418489E211BB277EC40A9 /* TranquilModuleStepper.m */,
+				B8D2D9F227DECBB2005B269E /* TranquilPreferencesController.h */,
+				B8D2D9EC27DECBB2005B269E /* TranquilPreferencesController.m */,
+				9B241A273BDF61EFB0D81D17 /* UIImage+TranquilModule.h */,
+				9B2419FA6A9040350B18D471 /* UIImage+TranquilModule.m */,
+				B83E354E2800C86C00F0F37E /* TranquilRoutePickerView.h */,
+				B83E354F2800C86C00F0F37E /* TranquilRoutePickerView.m */,
+				B83E35512800DA3900F0F37E /* TranquilRoutingViewController.h */,
+				B83E35522800DA3900F0F37E /* TranquilRoutingViewController.m */,
+				9B2419997FFDBAA3974D8DA7 /* rootless.h */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -296,6 +313,7 @@
 				English,
 				en,
 				Base,
+				ru,
 			);
 			mainGroup = 9B2413F4B2E92AC99D37B468;
 			productRefGroup = 9B241880696EB372AB810EDA /* Products */;
@@ -333,6 +351,7 @@
 				9B241BCA025176CBF66246D7 /* InfoPlist.strings in Resources */,
 				9B2413086002295F5021DEBA /* Localizable.strings in Resources */,
 				9B241F30B2DCF44215F88D21 /* Preferences.strings in Resources */,
+				9B2416871E6664B8DC296A5F /* build.sh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,11 +363,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				B8D2D9F627DECBB2005B269E /* TranquilModuleContentViewController.m in Sources */,
+				B83E35532800DA3900F0F37E /* TranquilRoutingViewController.m in Sources */,
 				B8D2D9F827DECBB2005B269E /* TranquilMediaPlayer.m in Sources */,
 				B8D2D9F527DECBB2005B269E /* TranquilModuleBackgroundViewController.m in Sources */,
 				B8D2D9FA27DECBB2005B269E /* TranquilModule.m in Sources */,
 				B8D2D9F727DECBB2005B269E /* TranquilPreferencesController.m in Sources */,
 				9B2412E1F5075DF96D681364 /* TranquilModuleStepper.m in Sources */,
+				B83E35502800C86C00F0F37E /* TranquilRoutePickerView.m in Sources */,
 				9B2414483F94C0D75BABD42F /* UIImage+TranquilModule.m in Sources */,
 				9B241A6E4548F658AA97F417 /* TranquilModuleSlider.m in Sources */,
 				9B24156C8744A9091EE0A050 /* TranquilListItemsController.m in Sources */,
@@ -419,7 +440,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks",
 				);
-				GCC_PREFIX_HEADER = "$(SRCROOT)/$(PROJECT_NAME)/App-Prefix.pch";
+				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -502,7 +523,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks",
 				);
-				GCC_PREFIX_HEADER = "$(SRCROOT)/$(PROJECT_NAME)/App-Prefix.pch";
+				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

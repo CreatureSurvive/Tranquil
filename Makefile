@@ -5,7 +5,11 @@
 #  Created by Dana Buehre on 3/8/22.
 #
 
-TARGET := iphone:clang:13.0:11.0
+ifeq ($(THEOS_PACKAGE_SCHEME),rootless)
+TARGET := iphone:clang:14.4:15.0
+else
+TARGET := iphone:clang:14.4:11.0
+endif
 ARCHS = arm64 arm64e
 
 DEBUG = 1
@@ -29,7 +33,7 @@ BUNDLE_NAME = Tranquil
 Tranquil_BUNDLE_EXTENSION = bundle
 Tranquil_FILES = $(wildcard Classes/*.m)
 Tranquil_CFLAGS = -fobjc-arc
-Tranquil_PRIVATE_FRAMEWORKS = ControlCenterUIKit Preferences SpringBoardServices
+Tranquil_PRIVATE_FRAMEWORKS = ControlCenterUIKit Preferences SpringBoardServices MediaControls
 Tranquil_INSTALL_PATH = /Library/ControlCenter/Bundles/
 
 include $(THEOS_MAKE_PATH)/bundle.mk

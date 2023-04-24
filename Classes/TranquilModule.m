@@ -49,7 +49,23 @@
 
             if ([weakSelf.preferences boolForKey:@"kPauseOnRouteChange"]) {
 
-                [weakSelf stopTrack];
+                AVAudioSessionRouteChangeReason reason;
+                [note.userInfo[AVAudioSessionRouteChangeReasonKey] getValue:&reason];
+
+                switch (reason)
+                {
+                    case AVAudioSessionRouteChangeReasonUnknown:
+                    case AVAudioSessionRouteChangeReasonOldDeviceUnavailable:
+                    case AVAudioSessionRouteChangeReasonCategoryChange:
+                    case AVAudioSessionRouteChangeReasonWakeFromSleep:
+                    case AVAudioSessionRouteChangeReasonNoSuitableRouteForCategory:
+                    case AVAudioSessionRouteChangeReasonRouteConfigurationChange:
+                        [weakSelf stopTrack];
+                        break;
+                    case AVAudioSessionRouteChangeReasonNewDeviceAvailable:
+                    case AVAudioSessionRouteChangeReasonOverride:
+                        break;
+                }
             }
         }];
     }
@@ -107,15 +123,15 @@
              if (!isPlaying)
              {
                  NSString *defaultSound = DefaultValueForKey(@"kActiveSound");
-                 if (![defaultSound isEqualToString:[_preferences stringForKey:@"kActiveSound"]])
+                 if (![defaultSound isEqualToString:[self->_preferences stringForKey:@"kActiveSound"]])
                  {
-                     [_preferences setObject:defaultSound forKey:@"kActiveSound"];
+                     [self->_preferences setObject:defaultSound forKey:@"kActiveSound"];
                      [self updatePreferencesExternally];
                      [self refreshState];
                  }
              }
 
-             [_contentViewController updateItemSelection];
+             [self->_contentViewController updateItemSelection];
         }];
 
     } else if ([TranquilMediaPlayer isPlaying]) {

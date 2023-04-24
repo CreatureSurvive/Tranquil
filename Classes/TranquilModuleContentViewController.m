@@ -6,19 +6,30 @@
 //
 //
 
+#import <MediaPlayer/MediaPlayer.h>
+#import <AVKit/AVKit.h>
 #import "TranquilModuleContentViewController.h"
 #import "TranquilModule.h"
+#import "TranquilRoutePickerView.h"
+#import "TranquilRoutingViewController.h"
 #import "UIImage+TranquilModule.h"
 #import "Prefix.h"
+#import "Material.h"
+#import "AVRouting.h"
+#import "Haptic.h"
 
-@interface NSObject ()
-- (id)safeValueForKey:(NSString *)key;
-@end
-
-@interface TranquilModuleContentViewController () {
+@interface TranquilModuleContentViewController () <AVRoutePickerViewDelegate, MPAVRoutingViewControllerThemeDelegate>
+{
 
     NSMutableDictionary *_checkmarksByID;
     BOOL _isExpanded;
+
+    BOOL _isRoutingViewHidden;
+    AVRouteDetector *_routeDetector;
+    TranquilRoutePickerView *_routePicker;
+    MTMaterialView *_routingViewContainerView;
+    TranquilRoutingViewController *_routingViewController;
+    NSLayoutConstraint *_routingViewHeightConstraint;
 }
 
 @end
@@ -31,10 +42,17 @@
 
         self.title = Localize(@"PROJECT_NAME");
         self.glyphImage = [UIImage tranquil_moduleImageNamed:@"Icon"];
-        self.selectedGlyphColor = [UIColor systemGrayColor];
+        self.selectedGlyphColor = [UIColor systemBlueColor];
     }
 
 	return self;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    [self _configureRoutePicker];
 }
 
 #pragma mark - CCUIMenuModuleViewController
@@ -56,10 +74,39 @@
     [self setSelected:[_module isPlaying]];
 }
 
+// handle item selection gestures
+- (void)_handlePressGesture:(UIGestureRecognizer *)sender
+{
+    if (!_isRoutingViewHidden) {
+        
+        // prevent item selection when the route picker is blocking the item stack
+        if (CGRectContainsPoint(_routingViewContainerView.frame, [sender locationInView:self.contentView])) {
+
+            return;
+        }
+    }
+    
+    // prevent item selection on iOS <= 12 when outside the view bounds
+    if (!CGRectContainsPoint(self.view.frame, [sender locationInView:self.view])) {
+        
+        return;
+    }
+    
+    [super _handlePressGesture:sender];
+}
+
+// this will hide the chin when the picker is expanded
+// currently unknown if iOS 11 has a chin, and this is only available on iOS >= 12
+- (BOOL)_shouldShowFooterChin {
+
+    return NO;
+}
+
 - (void)setSelected:(BOOL)selected
 {
     // prevent highlighting the glyph when expanded
     [super setSelected:_isExpanded ? NO : selected];
+    [_routePicker setHidden:!_isExpanded];
 }
 
 - (void)setExpanded:(BOOL)expanded
@@ -91,6 +138,7 @@
     [super willTransitionToExpandedContentMode:expand];
 
     [self setExpanded:expand];
+    [self _setRoutingViewHidden:YES animated:NO];
 
     if (!expand) return;
 
@@ -138,18 +186,7 @@
         }];
     }
 
-    [self setFooterButtonTitle:Localize(@"PROJECT_SETTINGS_TITLE") handler:^{
-        NSString *urlString;
-        if (@available(iOS 13, *)) {
-            urlString = [NSString stringWithFormat:@"prefs:root=ControlCenter&path=Tranquil"];
-        } else {
-            urlString = [NSString stringWithFormat:@"prefs:root=ControlCenter&path=CUSTOMIZE_CONTROLS/Tranquil"];
-        }
-        NSURL *url = [NSURL URLWithString:[urlString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLFragmentAllowedCharacterSet]]];
-
-        OpenApplicationUrl(url);
-        return NO;
-    }];
+    [self _configureFooterButton:NO];
 
     [self updateItemSelection];
 }
@@ -204,6 +241,33 @@
     [_checkmarksByID[[_module.preferences stringForKey:@"kActiveSound"]] setOpacity:1];
 }
 
+- (BOOL)_isStackConfigured
+{
+    return _checkmarksByID && _checkmarksByID.count;
+}
+
+- (void)_configureFooterButton:(BOOL)hidden
+{
+    if (hidden) {
+        
+        [self removeFooterButton];
+        return;
+    }
+    
+    [self setFooterButtonTitle:Localize(@"PROJECT_SETTINGS_TITLE") handler:^{
+        NSString *urlString;
+        if (@available(iOS 13, *)) {
+            urlString = [NSString stringWithFormat:@"prefs:root=ControlCenter&path=Tranquil"];
+        } else {
+            urlString = [NSString stringWithFormat:@"prefs:root=ControlCenter&path=CUSTOMIZE_CONTROLS/Tranquil"];
+        }
+        NSURL *url = [NSURL URLWithString:[urlString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLFragmentAllowedCharacterSet]]];
+
+        OpenApplicationUrl(url);
+        return NO;
+    }];
+}
+
 - (void)_configureCheckmarkWithKey:(NSString *)key inItemView:(UIView *)view
 {
     if (!view) return;
@@ -224,6 +288,101 @@
             [checkmark.heightAnchor constraintEqualToConstant:13],
             [checkmark.widthAnchor constraintEqualToConstant:13]
     ]];
+}
+
+- (void)_configureRoutePicker
+{
+    // routing view background blur
+    _routingViewContainerView = ControlCenterForegroundMaterial();
+    [_routingViewContainerView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    
+    _routingViewController = [TranquilRoutingViewController new];
+    [_routingViewController setParentController:self];
+    [_routingViewController.view setTranslatesAutoresizingMaskIntoConstraints:NO];
+    
+    // route detector for detecting route changes
+    _routeDetector = [AVRouteDetector new];
+    [_routeDetector setRouteDetectionEnabled:YES];
+    
+    // route picker button for animated route state
+    // action is overridden to show MPAVRoutingViewController
+    _routePicker = [TranquilRoutePickerView new];
+    [_routePicker setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [_routePicker setDelegate:self];
+    
+    [self addChildViewController:_routingViewController];
+    [_routingViewController didMoveToParentViewController:self];
+    
+    [self.view addSubview:_routePicker];
+    [self.contentView addSubview:_routingViewContainerView];
+    [_routingViewContainerView addSubview:_routingViewController.view];
+    
+    // set custom action for route picker button to show MPAVRoutingViewController
+    [_routePicker.routePickerButton addTarget:self action:@selector(_toggleRoutingView:) forControlEvents:UIControlEventTouchUpInside];
+    
+    _routingViewHeightConstraint = [_routingViewContainerView.heightAnchor constraintEqualToConstant:0];
+    
+    [NSLayoutConstraint activateConstraints:@[
+        [_routePicker.widthAnchor constraintEqualToConstant:36],
+        [_routePicker.heightAnchor constraintEqualToConstant:36],
+        [_routePicker.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:16],
+        [_routePicker.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-16],
+        [_routingViewController.view.bottomAnchor constraintEqualToAnchor:_routingViewContainerView.bottomAnchor],
+        [_routingViewController.view.topAnchor constraintLessThanOrEqualToAnchor:_routingViewContainerView.topAnchor],
+        [_routingViewController.view.leadingAnchor constraintEqualToAnchor:_routingViewContainerView.leadingAnchor],
+        [_routingViewController.view.trailingAnchor constraintEqualToAnchor:_routingViewContainerView.trailingAnchor],
+        [_routingViewContainerView.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor],
+        [_routingViewContainerView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor],
+        [_routingViewContainerView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor],
+        _routingViewHeightConstraint
+    ]];
+
+    [self _setRoutingViewHidden:YES animated:NO];
+}
+
+
+- (void)_toggleRoutingView:(UIButton *)sender
+{
+    BOOL newState = !_isRoutingViewHidden;
+    HapticSelection();
+
+    [self _setRoutingViewHidden:newState animated:YES];
+}
+
+- (void)_setRoutingViewHidden:(BOOL)hidden animated:(BOOL)animated
+{
+    if (_isExpanded) {
+        
+        // causes layout issues on iOS <= 12 if the stack is not configured first
+        if ([self _isStackConfigured]) {
+            
+            [self _configureFooterButton:!hidden];
+        }
+        
+        [_routingViewContainerView setHidden:NO];
+        [_routingViewContainerView setUserInteractionEnabled:!hidden];
+    }
+        
+    [self.contentView bringSubviewToFront:_routingViewContainerView];
+
+    NSTimeInterval duration = animated ? 0.333 : 0;
+    UIColor *pickerTint = hidden ? UIColor.whiteColor : UIColor.blackColor;
+    // TODO check if layout height is correct on iOS 11, footer chin may be shown?
+    CGFloat pickerHeight = hidden ? 0 : CGRectGetHeight(self.view.bounds) - self.headerHeight;
+
+    _isRoutingViewHidden = hidden;
+    _routingViewHeightConstraint.constant = pickerHeight;
+
+    [_routingViewController beginAppearanceTransition:!hidden animated:animated];
+
+    [UIView animateWithDuration:duration animations:^{
+        [self->_routePicker setTintColor:pickerTint];
+        [self->_routePicker.backgroundView setAlpha:!hidden];
+        [self.view layoutIfNeeded];
+    } completion:^(BOOL finished) {
+        [self->_routingViewContainerView setHidden:hidden];
+        [self->_routingViewController endAppearanceTransition];
+    }];
 }
 
 @end

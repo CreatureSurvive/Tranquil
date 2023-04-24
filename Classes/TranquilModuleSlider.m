@@ -118,7 +118,7 @@
             if (!_feedbackOccurred) {
 
                 _feedbackOccurred = YES;
-                PlayImpact(UIImpactFeedbackStyleLight);
+                HapticImpact(UIImpactFeedbackStyleLight);
             }
 
         } else {

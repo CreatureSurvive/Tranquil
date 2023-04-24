@@ -8,6 +8,7 @@
 
 #import "TranquilMediaPlayer.h"
 #import "TranquilModule.h"
+#import "Prefix.h"
 
 #import <AVFoundation/AVFoundation.h>
 
@@ -41,7 +42,9 @@
     dispatch_once(&once, ^{
         sharedInstance = [TranquilMediaPlayer new];
 
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback mode:AVAudioSessionModeDefault options:AVAudioSessionCategoryOptionMixWithOthers error:nil];
+        AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+        [audioSession setCategory:AVAudioSessionCategoryPlayback mode:AVAudioSessionModeDefault options:AVAudioSessionCategoryOptionMixWithOthers error:nil];
+        [audioSession overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
         [[NSClassFromString(@"SBMediaController") sharedInstance] addObserver:sharedInstance forKeyPath:NSStringFromSelector(@selector(nowPlayingProcessPID)) options:NSKeyValueObservingOptionNew context:NULL];
     });
 
@@ -102,10 +105,14 @@
 {
     _volume = volume;
 
+    void (^complete)(BOOL) = ^(BOOL playing) {
+        if (completion) dispatch_async(dispatch_get_main_queue(), ^{ completion(playing); });
+    };
+
     if (!filePath || ([self isPlaying] && [_currentlyPlayingFile isEqualToString:filePath])) {
 
         _player.volume = _volume;
-        if (completion) completion([self isPlaying]);
+        complete([self isPlaying]);
         return;
     }
 
@@ -123,24 +130,23 @@
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 
-            self->_player = [[AVAudioPlayer alloc] initWithContentsOfURL:fileURL error:nil];
-            [self->_player setNumberOfLoops:-1];
-            [self->_player setVolume:_volume];
+            AVAudioPlayer *player = [[AVAudioPlayer alloc] initWithContentsOfURL:fileURL error:nil];
+            [player setNumberOfLoops:-1];
+            [player setVolume:self->_volume];
 
-            [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback mode:AVAudioSessionModeDefault options:AVAudioSessionCategoryOptionMixWithOthers error:nil];
-            [[AVAudioSession sharedInstance] setActive:YES withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
+            self->_player = player;
 
-            [self->_player prepareToPlay];
+            AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+            [audioSession setCategory:AVAudioSessionCategoryPlayback mode:AVAudioSessionModeDefault options:AVAudioSessionCategoryOptionMixWithOthers error:nil];
+            [audioSession overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
+            [audioSession setActive:YES error:nil];
 
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self->_player play];
-                if (completion) completion([self isPlaying]);
-            });
+            complete([player play]);
         });
 
     } else if (completion) {
 
-        completion([self isPlaying]);
+        complete([self isPlaying]);
     }
 }
 
@@ -185,7 +191,7 @@
 }
 
 // due to limitations of AVAudioSession categories, we can either offer mixed audio, or receive interruption notifications
-// but not both, due to these limitations, we have to watch for now playing changes through private API inorder to replicate
+// but not both, due to these limitations, we have to watch for now playing changes through private API in order to replicate
 // iOS 15 background sounds features, specifically changing the volume when other media is playing. There are various ways
 // of accomplishing this, but all of which have other limitations they introduce such as respecting the physical silent switch
 // witch is undesirable for our purposes. so here we observe SBMediaController to check for now playing state changes.

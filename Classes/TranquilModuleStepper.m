@@ -114,11 +114,11 @@
 
         if (_value == _maxValue) {
 
-            PlayImpact(UIImpactFeedbackStyleMedium);
+            HapticImpact(UIImpactFeedbackStyleMedium);
 
         } else if (_value % 3600 == 0) {
 
-            PlayImpact(UIImpactFeedbackStyleLight);
+            HapticImpact(UIImpactFeedbackStyleLight);
         }
 
         if (sendEvents) {
@@ -145,11 +145,11 @@
 
         if (_value == _minValue) {
 
-            PlayImpact(UIImpactFeedbackStyleMedium);
+            HapticImpact(UIImpactFeedbackStyleMedium);
 
         } else if (_value % 3600 == 0) {
 
-            PlayImpact(UIImpactFeedbackStyleLight);
+            HapticImpact(UIImpactFeedbackStyleLight);
         }
 
         if (sendEvents) {

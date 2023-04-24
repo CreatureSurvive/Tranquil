@@ -165,7 +165,17 @@
 
         if (!cell.accessoryView || ![cell.accessoryView isKindOfClass:UIActivityIndicatorView.class]) {
 
-            UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+            UIActivityIndicatorView *spinner;
+            if (@available(iOS 13.0, *)) {
+                spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
+            } else {
+// this is ugly, it allows compilation when targeting iOS 15 for rootless
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+                spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+#pragma clang diagnostic pop
+            }
+
             [spinner setColor:UIColor.systemGrayColor];
             [spinner setFrame:CGRectMake(0, 0, 24, 24)];
             [cell setAccessoryView:spinner];

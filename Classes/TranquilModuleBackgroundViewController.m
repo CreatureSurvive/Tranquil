@@ -36,6 +36,10 @@ typedef NS_ENUM(NSUInteger, TMLayoutDirection) {
 @property (assign, nonatomic) BOOL useAlternateBackground;
 @end
 
+@interface  CCUIRoundButton (iOS15)
+@property (nonatomic,copy) UIColor * highlightTintColor;
+@end
+
 @interface TranquilModuleBackgroundViewController () {
 
     float _lastVolume;
@@ -196,7 +200,7 @@ typedef NS_ENUM(NSUInteger, TMLayoutDirection) {
 {
     if ([sender isKindOfClass:UILongPressGestureRecognizer.class] && sender.state == UIGestureRecognizerStateBegan) {
 
-        PlayImpactWithSound(UIImpactFeedbackStyleMedium, 1104);
+        HapticImpactWithSound(UIImpactFeedbackStyleMedium, 1104);
 
         if (sender.view == _volumeButtonViewController.button) {
 
@@ -313,10 +317,19 @@ typedef NS_ENUM(NSUInteger, TMLayoutDirection) {
     [self _configureTimerControllerState];
 }
 
+- (void)_setButton:(CCUIRoundButton *)button tintColor:(UIColor *)tintColor {
+    if ([button respondsToSelector:@selector(highlightTintColor)]) {
+        button.highlightTintColor = tintColor;
+    } else {
+        button.glyphImageView.tintColor = tintColor;
+    }
+}
+
 - (void)_configureVolumeControllerState
 {
     float split = 1.f / 3;
     float value = _volumeSlider.value;
+    BOOL enabled = value > 0;
     NSString *glyphName = (value <= 0) ? @"VolumeMute"
             : (value > 0 && value < split) ? @"VolumeLow"
             : (value >= split && value < (split * 2)) ? @"VolumeHigh"
@@ -324,9 +337,10 @@ typedef NS_ENUM(NSUInteger, TMLayoutDirection) {
             : @"VolumeMute";
 
     [_volumeButtonViewController setGlyphImage:[UIImage tranquil_moduleImageNamed:glyphName]];
-    [_volumeButtonViewController setEnabled:value > 0];
+    [_volumeButtonViewController setEnabled:enabled];
     [_volumeButtonViewController.button setNeedsLayout];
     [_volumeButtonViewController setTitle:[NSString stringWithFormat:Localize(@"VOLUME_STATUS_LABEL"), (int)(value * 100)]];
+    [self _setButton:(CCUIRoundButton *)_volumeButtonViewController.button tintColor:enabled ? UIColor.whiteColor : UIColor.blackColor];
 }
 
 - (void)_configurePlaybackControllerState
@@ -365,31 +379,35 @@ typedef NS_ENUM(NSUInteger, TMLayoutDirection) {
             : CGAffineTransformIdentity;
 
     void (^updateAlpha)(void) = ^{
-        _playbackButtonViewController.view.alpha = !opening;
-        (isVolume ? (UIControl*)_volumeSlider : (UIControl*)_timerStepper).enabled = opening;
-        (isVolume ? _volumeControlContainer : _timerControlContainer).alpha = opening;
-        (isVolume ? _timerButtonViewController : _volumeButtonViewController).view.alpha = !opening;
+        self->_playbackButtonViewController.view.alpha = !opening;
+        (isVolume ? (UIControl*)self->_volumeSlider : (UIControl*)self->_timerStepper).enabled = opening;
+        (isVolume ? self->_volumeControlContainer : self->_timerControlContainer).alpha = opening;
+        (isVolume ? self->_timerButtonViewController : self->_volumeButtonViewController).view.alpha = !opening;
     };
 
     void (^updateLayout)(void) = ^{
         switch (direction) {
             case TMLayoutDirectionVertical: {
                 CGFloat controlWidth = (UIEdgeInsetsInsetRect(self.view.bounds, self.view.layoutMargins).size.width - 76);
-                (isVolume ? _volumeControlContainerTrailingAnchor : _timerControlContainerLeadingAnchor).constant = opening ? 0 : NEGATE_IF(controlWidth, isVolume);
-                (isVolume ? _volumeControlLeadingAnchor : _timerControlTrailingAnchor).constant = opening ? NEGATE_IF(65, !isVolume) : NEGATE_IF(3, !isVolume);
-                (isVolume ? _volumeButtonWidthAnchor : _timerButtonWidthAnchor).constant = opening ? 54 : 108;
+                (isVolume ? self->_volumeControlContainerTrailingAnchor : self->_timerControlContainerLeadingAnchor).constant = opening ? 0 : NEGATE_IF(controlWidth, isVolume);
+                (isVolume ? self->_volumeControlLeadingAnchor : self->_timerControlTrailingAnchor).constant = opening ? NEGATE_IF(65, !isVolume) : NEGATE_IF(3, !isVolume);
+                (isVolume ? self->_volumeButtonWidthAnchor : self->_timerButtonWidthAnchor).constant = opening ? 54 : 108;
             }   break;
             case TMLayoutDirectionHorizontal: {
                 CGFloat controlHeight = (UIEdgeInsetsInsetRect(self.view.bounds, self.view.layoutMargins).size.height - 76);
-                (isVolume ? _volumeControlContainerBottomAnchor : _timerControlContainerTopAnchor).constant = opening ? 0 : NEGATE_IF(controlHeight, isVolume);
-                (isVolume ? _volumeControlTopAnchor : _timerControlBottomAnchor).constant = opening ? NEGATE_IF(65, !isVolume) : NEGATE_IF(3, !isVolume);
-                (isVolume ? _volumeButtonWidthAnchor : _timerButtonWidthAnchor).constant = 108;
+                (isVolume ? self->_volumeControlContainerBottomAnchor : self->_timerControlContainerTopAnchor).constant = opening ? 0 : NEGATE_IF(controlHeight, isVolume);
+                (isVolume ? self->_volumeControlTopAnchor : self->_timerControlBottomAnchor).constant = opening ? NEGATE_IF(65, !isVolume) : NEGATE_IF(3, !isVolume);
+                (isVolume ? self->_volumeButtonWidthAnchor : self->_timerButtonWidthAnchor).constant = 108;
             }   break;
         }
 
-        (isVolume ? _volumeButtonViewController : _timerButtonViewController).view.transform = buttonTransform;
-        (isVolume ? _volumeButtonViewController : _timerButtonViewController).useAlternateBackground = opening;
-        ((CCUIRoundButton *)(isVolume ? _volumeButtonViewController : _timerButtonViewController).button).glyphImageView.tintColor = opening ? UIColor.blackColor : UIColor.whiteColor;
+        CCUILabeledRoundButtonViewController *controller = (isVolume ? self->_volumeButtonViewController : self->_timerButtonViewController);
+
+        controller.view.transform = buttonTransform;
+        controller.useAlternateBackground = opening;
+
+        UIColor *tintColor =  controller.button.selected || !opening ? UIColor.whiteColor : UIColor.blackColor;
+        [self _setButton:(CCUIRoundButton *)controller.button tintColor:tintColor];
 
         [self.view layoutIfNeeded];
     };
@@ -462,10 +480,13 @@ typedef NS_ENUM(NSUInteger, TMLayoutDirection) {
 
 - (void)_configureConstraints
 {
+    // perform a layout pass on the playback button so we can fetch its height
+    [_playbackButtonViewController.view layoutIfNeeded];
+
     CGFloat buttonViewWidth = 108;
     CGFloat bottomMargin = -88;
-    CGFloat fixedHeight = 54;
-    CGFloat openHeight = 46;
+    CGFloat fixedHeight = _playbackButtonViewController.button.bounds.size.height;
+    CGFloat openHeight = fixedHeight - 8;
     CGFloat margin = 38;
     UILayoutGuide *marginsGuide = self.view.layoutMarginsGuide;
 
@@ -551,6 +572,9 @@ typedef NS_ENUM(NSUInteger, TMLayoutDirection) {
             [_timerButtonViewController.view.bottomAnchor constraintEqualToAnchor:_controlContainer.bottomAnchor],
             [_timerButtonViewController.view.centerXAnchor constraintEqualToAnchor:_controlContainer.centerXAnchor]
     ];
+
+    SetCornerRadiusLayer(_timerControlContainer.layer, fixedHeight / 2);
+    SetCornerRadiusLayer(_volumeControlContainer.layer, fixedHeight / 2);
 }
 
 - (CCUILabeledRoundButtonViewController *)_labeledRoundButtonControllerWithGlyph:(NSString *)glyphName highlightColor:(UIColor *)color initialState:(BOOL)state useLongPress:(BOOL)useLongPress

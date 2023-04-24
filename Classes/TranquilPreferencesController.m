@@ -249,9 +249,12 @@ TranquilPreferencesController *loadedController;
 
 - (void)presentDocumentPicker
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 	UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:@[@"public.audio"] inMode:UIDocumentPickerModeImport];
 	documentPicker.delegate = self;
 	[self presentViewController:documentPicker animated:YES completion:nil];
+#pragma clang diagnostic pop
 }
 
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentAtURL:(NSURL *)url

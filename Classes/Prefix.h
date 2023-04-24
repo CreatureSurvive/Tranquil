@@ -12,7 +12,9 @@
 
 #import <QuartzCore/QuartzCore.h>
 #import <Foundation/Foundation.h>
+#import <os/log.h>
 #import <dlfcn.h>
+#import "rootless.h"
 
 // https://stackoverflow.com/a/14770282/4668186
 #define CLAMP(x, low, high) ({\
@@ -29,11 +31,21 @@
 #define TranquilPreferencesChanged "com.creaturecoding.tranquil/preferences-changed"
 #define TranquilPreferencesChangedExternal "com.creaturecoding.tranquil/preferences-changed-externally"
 
-#define TranquilBundlePath @"/Library/ControlCenter/Bundles/Tranquil.bundle"
+#define TranquilBundlePath ROOT_PATH_NS(@"/Library/ControlCenter/Bundles/Tranquil.bundle")
 #define TranquilSupportPath @"/var/mobile/Library/Application Support/Tranquil/"
-#define TranquilBundledAudioPath @"/Library/ControlCenter/Bundles/Tranquil.bundle/Audio"
+#define TranquilBundledAudioPath ROOT_PATH_NS(@"/Library/ControlCenter/Bundles/Tranquil.bundle/Audio")
 #define TranquilImportedAudioPath @"/var/mobile/Library/Application Support/Tranquil/Audio/"
 #define TranquilDownloadableAudioPath @"/var/mobile/Library/Application Support/Tranquil/Downloadable/"
+
+#define Log(format, ...)    os_log(OS_LOG_DEFAULT,          ("(com.creaturecoding.tranquil) %s [LOG Line %d] " format), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+#define Info(format, ...)   os_log_info(OS_LOG_DEFAULT,     ("(com.creaturecoding.tranquil) %s [INFO Line %d] " format), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+#define Error(format, ...)  os_log_error(OS_LOG_DEFAULT,    ("(com.creaturecoding.tranquil) %s [ERROR Line %d] " format), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+#define Fault(format, ...)  os_log_fault(OS_LOG_DEFAULT,    ("(com.creaturecoding.tranquil) %s [FAULT Line %d] " format), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+#define LogWithType(type, format, ...) os_log_with_type(OS_LOG_DEFAULT, type, ("(com.creaturecoding.tranquil) %s [Line %d] " format), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+
+@interface NSObject ()
+- (id)safeValueForKey:(NSString *)key;
+@end
 
 NS_INLINE __unused NSBundle *ModuleBundle(BOOL loadIfNeeded)
 {
